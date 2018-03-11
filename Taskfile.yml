@@ -1,0 +1,70 @@
+version: '2'
+tasks:
+  default:
+    deps:
+      - task: init
+
+  init:
+    desc: Start and initialize
+    cmds:
+      - cmd: if [ -f /.dockerenv ]; then echo "Don't execute it in docker app container"; false; fi
+        silent: true
+      - docker-compose build
+      - docker-compose up -d
+      - docker-compose exec app pip install -e .
+      - task: init-db
+
+  init-db:
+    desc: Initialize database with sample datas
+    cmds:
+      - cmd: if [ -f /.dockerenv ]; then echo "Don't execute it in docker app container"; false; fi
+        silent: true
+      - docker-compose run --rm wait_postgres
+      - docker-compose exec migrate /migrate up
+      - sh -c "cat sample_data.sql | docker exec -i --user postgres `docker-compose ps -q postgres` psql polls"
+
+  enter:
+    desc: Open shell in app container
+    cmds:
+      - cmd: if [ -f /.dockerenv ]; then echo "Don't execute it in docker app container"; false; fi
+        silent: true
+      - docker-compose exec app bash
+
+  tests:
+    desc: Execute tests
+    cmds:
+      - cmd: |
+          if [ -f /.dockerenv ]; then
+            pytest -v demo_polls/
+          else
+            docker-compose exec app sh -c "pytest -v demo_polls/"
+          fi
+
+        silent: true
+
+  clean:
+    desc: Stop and destroy all container and databases
+    cmds:
+      - cmd: if [ -f /.dockerenv ]; then echo "Don't execute it in docker app container"; false; fi
+        silent: true
+      - docker-compose stop
+      - docker-compose rm -f
+      - rm -rf data/
+      - rm -rf data-test/
+      - rm -rf demo_polls.egg-info/
+      - rm -rf .pytest_cache/
+      - rm -rf demo_polls/__pycache__
+
+  build-docker:
+    desc: Build harobed/demo_polls Docker image
+    cmds:
+      - cmd: if [ -f /.dockerenv ]; then echo "Don't execute it in docker app container"; false; fi
+        silent: true
+      - docker build -t harobed/demo_polls .
+      - docker build -t harobed/demo_polls_migrate migrate/
+
+  upload:
+    cmds:
+      - cmd: if [ -f /.dockerenv ]; then echo "Don't execute it in docker app container"; false; fi
+        silent: true
+      - docker push harobed/demo_polls

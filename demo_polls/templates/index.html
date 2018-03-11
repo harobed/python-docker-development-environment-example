@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% set title = "Polls" %}
+
+{% block content %}
+  {% if questions %}
+      <ul>
+      {% for question in questions %}
+      <li><a href="{{ url('get_poll', question_id=question.id|string) }}">{{ question.question_text }}</a></li>
+      {% endfor %}
+      </ul>
+  {% else %}
+      <p>No polls are available.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% set title = question.question_text %}
+
+{% block content %}
+  <p>Results:</p>
+
+  <ul>
+  {% for choice in choices %}
+      <li>{{ choice.choice_text }} - {{ choice.votes }} vote(s)</li>
+  {% endfor %}
+  </ul>
+{% endblock %}

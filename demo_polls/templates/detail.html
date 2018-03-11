@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% set title = question.question_text %}
+
+{% block content %}
+  <form action="{{ url('post_poll', question_id=question.id|string) }}" method="post">
+  {% for choice in choices %}
+      <input type="radio" name="choice" id="choice{{ loop.index }}" value="{{ choice.id }}" />
+      <label for="choice{{ loop.index }}">{{ choice.choice_text }}</label><br />
+  {% endfor %}
+  <div class="field">
+    <div class="control">
+      <input type="submit" class="button is-link" value="Vote" />
+    </div>
+  </div>
+  </form>
+{% endblock %}

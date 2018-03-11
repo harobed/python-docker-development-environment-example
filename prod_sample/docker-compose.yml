@@ -1,0 +1,43 @@
+version: '3'
+services:
+  app:
+    image: harobed/demo_polls:latest
+    restart: unless-stopped
+    environment:
+      - POLLS_DEBUG=1
+      - POLLS_HOST=0.0.0.0
+      - POLLS_PORT=5000
+      - POLLS_DB_HOST=postgres
+      - POLLS_DB_USER=polls
+      - POLLS_DB_PASSWORD=password
+      - POLLS_DB_NAME=polls
+    ports:
+      - 5000
+
+  postgres:
+    image: postgres:9.6
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=polls
+      - POSTGRES_DB=polls
+    volumes:
+        - ./data/:/var/lib/postgresql/data
+
+  wait_postgres:
+    image: "waisbrot/wait"
+    environment:
+      TARGETS: postgres:5432
+
+  migrate:
+    image: harobed/demo_polls_migrate
+    command: up
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=polls
+      - DB_PASSWORD=password
+      - DB_NAME=polls
+
+networks:
+  default:
+    driver: bridge

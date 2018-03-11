@@ -1,0 +1,2 @@
+pytest==3.4.2
+pytest-aiohttp==0.3.0

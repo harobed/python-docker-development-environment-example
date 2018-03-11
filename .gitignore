@@ -1,0 +1,6 @@
+data/
+data-test/
+demo_polls.egg-info/
+__pycache__/
+.pytest_cache/
+demo.cast

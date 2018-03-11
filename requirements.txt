@@ -1,0 +1,16 @@
+aiohttp==3.0.5
+aiohttp-jinja2==0.16.0
+async-timeout==2.0.0
+attrs==17.4.0
+chardet==3.0.4
+click==6.7
+idna==2.6
+idna-ssl==1.0.0
+Jinja2==2.10
+MarkupSafe==1.0
+multidict==4.1.0
+yarl==1.1.1
+aiopg==0.13.2
+psycopg2-binary==2.7.4
+SQLAlchemy==1.2.4
+requests-html==0.7.2
